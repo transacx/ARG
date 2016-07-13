@@ -1,18 +1,19 @@
 // Copyright (c) 2012 The Bitcoin developers
-// Copyright (c) 2012 Litecoin Developers
+// Copyright (c) 2014 The Inutoshi developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-#include <string>
 
 #include "version.h"
 
+#include <string>
+
 // Name of client reported in the 'version' message. Report the same name
-// for both bitcoind and bitcoin-qt, to make it harder for attackers to
+// for both argentumd and argentum-qt, to make it harder for attackers to
 // target servers or GUI users specifically.
-const std::string CLIENT_NAME("ARG V1.2.5");
+const std::string CLIENT_NAME("Argetoshi");
 
 // Client version number
-#define CLIENT_VERSION_SUFFIX   "-beta"
+#define CLIENT_VERSION_SUFFIX   ""
 
 
 // The following part of the code determines the CLIENT_BUILD variable.
@@ -35,22 +36,25 @@ const std::string CLIENT_NAME("ARG V1.2.5");
 #endif
 
 // git will put "#define GIT_ARCHIVE 1" on the next line inside archives. 
-#define GIT_ARCHIVE 1
+#define GIT_ARCHIVE 0
 #ifdef GIT_ARCHIVE
-#    define GIT_COMMIT_ID "9ec6669"
-//#    define GIT_COMMIT_DATE "$Format:%cD"
+#    define GIT_COMMIT_ID ""
+#    define GIT_COMMIT_DATE ""
 #endif
 
-#define STRINGIFY(s) #s
+#define BUILD_DESC_WITH_SUFFIX(maj,min,rev,build,suffix) \
+    "v" DO_STRINGIZE(maj) "." DO_STRINGIZE(min) "." DO_STRINGIZE(rev) "." DO_STRINGIZE(build) "-" DO_STRINGIZE(suffix)
 
 #define BUILD_DESC_FROM_COMMIT(maj,min,rev,build,commit) \
-    "v" STRINGIFY(maj) "." STRINGIFY(min) "." STRINGIFY(rev) "." STRINGIFY(build) "-g" commit
+    "v" DO_STRINGIZE(maj) "." DO_STRINGIZE(min) "." DO_STRINGIZE(rev) "." DO_STRINGIZE(build) "-g" commit
 
 #define BUILD_DESC_FROM_UNKNOWN(maj,min,rev,build) \
-    "v" STRINGIFY(maj) "." STRINGIFY(min) "." STRINGIFY(rev) "." STRINGIFY(build) "-unk"
+    "v" DO_STRINGIZE(maj) "." DO_STRINGIZE(min) "." DO_STRINGIZE(rev) "." DO_STRINGIZE(build) "-unk"
 
 #ifndef BUILD_DESC
-#    ifdef GIT_COMMIT_ID
+#    ifdef BUILD_SUFFIX
+#        define BUILD_DESC BUILD_DESC_WITH_SUFFIX(CLIENT_VERSION_MAJOR, CLIENT_VERSION_MINOR, CLIENT_VERSION_REVISION, CLIENT_VERSION_BUILD, BUILD_SUFFIX)
+#    elif defined(GIT_COMMIT_ID)
 #        define BUILD_DESC BUILD_DESC_FROM_COMMIT(CLIENT_VERSION_MAJOR, CLIENT_VERSION_MINOR, CLIENT_VERSION_REVISION, CLIENT_VERSION_BUILD, GIT_COMMIT_ID)
 #    else
 #        define BUILD_DESC BUILD_DESC_FROM_UNKNOWN(CLIENT_VERSION_MAJOR, CLIENT_VERSION_MINOR, CLIENT_VERSION_REVISION, CLIENT_VERSION_BUILD)
